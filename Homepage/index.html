@@ -113,16 +113,6 @@
             z-index: 1000;
         }
 
-        @media (max-width: 600px) {
-            .hero-content h1 {
-                font-size: 2.5rem;
-            }
-
-            .section {
-                padding: 3rem 0;
-            }
-        }
-
         .counter-section {
             background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
             padding: 4rem 0;
@@ -201,7 +191,7 @@
         }
 
         .gallery-container {
-            height: 400vh;
+            height: 200vh; /* Reduced from 400vh to 200vh */
             position: relative;
             background: #000;
         }
@@ -239,6 +229,32 @@
             text-align: center;
             width: 80%;
             max-width: 600px;
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            right: 2%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 5px;
+            height: 60%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            z-index: 1001;
+        }
+
+        .scroll-indicator .indicator-progress {
+            width: 100%;
+            height: 0%;
+            background: var(--primary-color);
+            transition: height 0.3s ease;
+        }
+
+        @media (max-width: 600px) {
+            .scroll-indicator {
+                right: 5%;
+            }
         }
 
         .testimonial-section {
@@ -486,6 +502,20 @@
         .products-container {
             padding: 2rem 0;
         }
+
+        @media (max-width: 600px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero {
+                background-size: auto;
+            }
+
+            .section {
+                padding: 3rem 0;
+            }
+        }
     </style>
 </head>
 
@@ -579,6 +609,10 @@
                     <p>Currently the Varna Cotton Mills is managed by KRISHNAKUMAR G [BSC] who is looking on and completly trying to improve the legacy</p>
                 </div>
             </div>
+            <!-- Add scroll indicator inside the horizontal gallery wrapper -->
+            <div class="scroll-indicator">
+                <div class="indicator-progress"></div>
+            </div>
         </div>
     </section>
 
@@ -614,9 +648,9 @@
             <div class="col s12">
                 <ul class="tabs">
                     <li class="tab col s3"><a href="#all" class="active">All Products</a></li>
-                    <li class="tab col s3"><a href="#cotton">Raw Cotton</a></li>
-                    <li class="tab col s3"><a href="#yarn">Cotton Yarn</a></li>
-                    <li class="tab col s3"><a href="#fabric">Fabrics</a></li>
+                    <li class="tab col s3"><a href="#cotton">Cotton Grey Fabric</a></li>
+                    <li class="tab col s3"><a href="#fabric-tape">Fabric Tape</a></li>
+                    <li class="tab col s3"><a href="#rayon-fabric">Rayon Fabric</a></li>
                 </ul>
             </div>
         </div>
@@ -657,7 +691,7 @@
                     </div>
                 </div>
 
-                <div class="col s12 m4 product-card-wrapper" data-category="yarn">
+                <div class="col s12 m4 product-card-wrapper" data-category="cotton">
                     <div class="product-card">
                         <div class="product-card-inner">
                             <div class="product-front">
@@ -673,7 +707,7 @@
                     </div>
                 </div>
 
-                <div class="col s12 m4 product-card-wrapper" data-category="yarn">
+                <div class="col s12 m4 product-card-wrapper" data-category="cotton">
                     <div class="product-card">
                         <div class="product-card-inner">
                             <div class="product-front">
@@ -689,7 +723,7 @@
                     </div>
                 </div>
 
-                <div class="col s12 m4 product-card-wrapper" data-category="fabric">
+                <div class="col s12 m4 product-card-wrapper" data-category="fabric-tape">
                     <div class="product-card">
                         <div class="product-card-inner">
                             <div class="product-front">
@@ -705,7 +739,7 @@
                     </div>
                 </div>
 
-                <div class="col s12 m4 product-card-wrapper" data-category="fabric">
+                <div class="col s12 m4 product-card-wrapper" data-category="rayon-fabric">
                     <div class="product-card">
                         <div class="product-card-inner">
                             <div class="product-front">
@@ -1194,10 +1228,11 @@
             // Initialize the carousel
             new TestimonialCarousel();
 
-            // Updated Gallery Scroll Logic
+            // Updated Gallery Scroll Logic with Scroll Indicator
             const galleryContainer = document.querySelector('.gallery-container');
             const galleryWrapper = document.querySelector('.horizontal-gallery-wrapper');
             const galleryItems = document.querySelectorAll('.gallery-item');
+            const indicatorProgress = document.querySelector('.indicator-progress');
             const itemCount = galleryItems.length;
 
             // Initialize gallery wrapper as visible
@@ -1210,7 +1245,7 @@
                 const viewportHeight = window.innerHeight;
 
                 if (containerTop <= 0 && containerTop > -containerHeight + viewportHeight) {
-                    // Calculate which image to show
+                    // Calculate scroll progress
                     const scrollProgress = Math.abs(containerTop) / (containerHeight - viewportHeight);
                     const currentIndex = Math.min(
                         Math.floor(scrollProgress * itemCount),
@@ -1225,8 +1260,26 @@
                             item.classList.remove('active');
                         }
                     });
+
+                    // Update scroll indicator
+                    indicatorProgress.style.height = `${scrollProgress * 100}%`;
+                }
+
+                // Show or hide scroll indicator based on scroll position
+                if (containerTop <= 0 && containerTop > -containerHeight + viewportHeight) {
+                    $('.scroll-indicator').fadeIn(200);
+                } else {
+                    $('.scroll-indicator').fadeOut(200);
                 }
             });
+
+            // Adjust scroll sensitivity for mouse users
+            let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints;
+
+            if (!isTouchDevice) {
+                // For mouse devices, add smooth scrolling effect
+                $('body, html').css('scroll-behavior', 'smooth');
+            }
 
             // Enhanced Product filter
             $('.filter-button').click(function() {
@@ -1264,4 +1317,4 @@
         });
     </script>
 </body>
-</html> 
+</html>
