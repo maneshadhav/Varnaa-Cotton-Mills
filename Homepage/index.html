@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Varnaa Cotton Mills</title>
+
+    <!-- Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <style>
+        :root {
+            --primary-color: #DAA520;
+            --secondary-color: #F4A460;
+            --accent-color: #FFD700;
+            --text-light: #FFF;
+            --text-dark: #333;
+        }
+
+        body {
+            overflow-x: hidden;
+            background: linear-gradient(45deg, #FFF5EE, #FFDEAD);
+        }
+
+        .full-height {
+            height: 100vh;
+            position: relative;
+        }
+
+        .hero {
+            background: url('https://picsum.photos/1920/1080?grayscale') no-repeat center center;
+            background-size: cover;
+            position: relative;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            color: var(--text-light);
+            padding: 2rem;
+        }
+
+        nav {
+            background: transparent;
+            box-shadow: none;
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .section {
+            padding: 5rem 0;
+        }
+
+        .card {
+            border-radius: 15px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .product-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .product-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .product-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+
+        @media (max-width: 600px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .section {
+                padding: 3rem 0;
+            }
+        }
+
+        .counter-section {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            padding: 4rem 0;
+            color: white;
+        }
+
+        .stats-counter {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .product-card {
+            height: 400px;
+            perspective: 1000px;
+            margin: 1rem;
+        }
+
+        .product-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .product-card:hover .product-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .product-front,
+        .product-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            padding: 1rem;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-front img {
+            width: 100%;
+            height: 70%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .product-back {
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .horizontal-gallery-wrapper {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.9);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .horizontal-gallery-wrapper.visible {
+            opacity: 1;
+        }
+
+        .gallery-container {
+            height: 400vh;
+            position: relative;
+            background: #000;
+        }
+
+        .gallery-item {
+            position: absolute;
+            width: 80vw;
+            height: 80vh;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s ease;
+        }
+
+        .gallery-item.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        .gallery-content {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2rem;
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .testimonial-section {
+            background: linear-gradient(135deg, rgba(218, 165, 32, 0.1), rgba(244, 164, 96, 0.1));
+            padding: 4rem 0;
+        }
+
+        .overall-rating {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .rating-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .star-rating {
+            color: #FFD700;
+            font-size: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+        }
+
+        .testimonial-info {
+            margin-left: 1.5rem;
+        }
+
+        .testimonial-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .testimonial-position {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .testimonial-quote {
+            font-style: italic;
+            line-height: 1.6;
+            color: #444;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+            padding-top: 1rem;
+        }
+
+        .testimonial-date {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .testimonial-verified {
+            color: #4CAF50;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .testimonial-verified i {
+            margin-right: 0.5rem;
+        }
+
+        .testimonial-carousel {
+            position: relative;
+            height: 400px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .testimonial-track {
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+
+        .testimonial-card {
+            position: absolute;
+            width: 600px;
+            top: 0;
+            left: 50%;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-50%) scale(0.8);
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .testimonial-card.prev {
+            transform: translateX(-150%) scale(0.85);
+            opacity: 0.7;
+            visibility: visible;
+            z-index: 1;
+        }
+
+        .testimonial-card.active {
+            transform: translateX(-50%) scale(1);
+            opacity: 1;
+            visibility: visible;
+            z-index: 2;
+        }
+
+        .testimonial-card.next {
+            transform: translateX(50%) scale(0.85);
+            opacity: 0.7;
+            visibility: visible;
+            z-index: 1;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .carousel-nav:hover {
+            background: var(--secondary-color);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-prev { left: 20px; }
+        .carousel-next { right: 20px; }
+
+        @media (max-width: 768px) {
+            .testimonial-card {
+                width: 90%;
+            }
+            .testimonial-card.prev { transform: translateX(-120%) scale(0.85); }
+            .testimonial-card.next { transform: translateX(20%) scale(0.85); }
+        }
+
+        .filter-buttons {
+            margin-bottom: 3rem;
+        }
+        
+        .filter-button {
+            margin: 0 0.5rem;
+            padding: 0 2rem;
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-button.active {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 15px rgba(218, 165, 32, 0.3);
+        }
+        
+        .product-category {
+            display: none;
+        }
+        
+        .product-category.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Add these map styles */
+        .map-container {
+            height: 400px;
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1;
+            position: relative;
+        }
+
+        .tabs {
+            background-color: transparent;
+            margin-bottom: 2rem;
+        }
+        
+        .tabs .tab a {
+            color: var(--primary-color);
+        }
+        
+        .tabs .tab a:hover,
+        .tabs .tab a.active {
+            color: var(--primary-color);
+            background-color: rgba(218, 165, 32, 0.1);
+        }
+        
+        .tabs .indicator {
+            background-color: var(--primary-color);
+        }
+        
+        .products-container {
+            padding: 2rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <div class="navbar-fixed">
+        <nav>
+            <div class="nav-wrapper container">
+                <a href="#" class="brand-logo">
+                    <img src="https://picsum.photos/120/120?blur=2" alt="Varnaa" height="50">
+                </a>
+                <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                <ul class="right hide-on-med-and-down">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#products">Products</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <ul class="sidenav" id="mobile-nav">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+
+    <!-- Hero Section -->
+    <section id="home" class="full-height hero valign-wrapper">
+        <div class="container hero-content center-align">
+            <h1 class="animate__animated animate__fadeInDown">Varnaa Cotton Mills</h1>
+            <p class="flow-text animate__animated animate__fadeInUp animate__delay-1s">
+                Crafting Quality Since 1970
+            </p>
+            <a href="#about" class="btn-large waves-effect waves-light" style="background-color: var(--primary-color)">
+                Learn More
+            </a>
+        </div>
+    </section>
+
+    <!-- About Section with Parallax -->
+    <section id="about" class="section scrollspy">
+        <div class="parallax-container">
+            <div class="parallax">
+                <img src="https://picsum.photos/1920/1080?blur=5" alt="About Us">
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col s12 m8 offset-m2 animate-on-scroll">
+                        <div class="card-panel">
+                            <h3>Our Legacy</h3>
+                            <p class="flow-text">Content about company legacy...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="gallery-container" id="gallery">
+        <div class="horizontal-gallery-wrapper visible">
+            <div class="gallery-item active" data-index="0">
+                <img src="https://picsum.photos/1200/800?random=1" alt="Process 1">
+                <div class="gallery-content">
+                    <h3>Raw Cotton Selection</h3>
+                    <p>Premium cotton sourcing from sustainable farms</p>
+                </div>
+            </div>
+            <div class="gallery-item" data-index="1">
+                <img src="https://picsum.photos/1200/800?random=2" alt="Process 2">
+                <div class="gallery-content">
+                    <h3>Processing</h3>
+                    <p>State-of-the-art processing facilities</p>
+                </div>
+            </div>
+            <div class="gallery-item" data-index="2">
+                <img src="https://picsum.photos/1200/800?random=3" alt="Process 3">
+                <div class="gallery-content">
+                    <h3>Quality Control</h3>
+                    <p>Rigorous quality standards</p>
+                </div>
+            </div>
+            <div class="gallery-item" data-index="3">
+                <img src="https://picsum.photos/1200/800?random=4" alt="Process 4">
+                <div class="gallery-content">
+                    <h3>Final Product</h3>
+                    <p>Ready for global distribution</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Counter -->
+    <section class="counter-section">
+        <div class="container">
+            <div class="row">
+                <div class="col s12 m3 center-align">
+                    <div class="stats-counter" data-count="50">0</div>
+                    <p>Years of Excellence</p>
+                </div>
+                <div class="col s12 m3 center-align">
+                    <div class="stats-counter" data-count="1000000">0</div>
+                    <p>Products Delivered</p>
+                </div>
+                <div class="col s12 m3 center-align">
+                    <div class="stats-counter" data-count="500">0</div>
+                    <p>Happy Clients</p>
+                </div>
+                <div class="col s12 m3 center-align">
+                    <div class="stats-counter" data-count="25">0</div>
+                    <p>Countries Served</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Showcase -->
+    <section id="products" class="section scrollspy">
+    <div class="container">
+        <h3 class="center-align">Our Products</h3>
+        <div class="row">
+            <div class="col s12">
+                <ul class="tabs">
+                    <li class="tab col s3"><a href="#all" class="active">All Products</a></li>
+                    <li class="tab col s3"><a href="#cotton">Raw Cotton</a></li>
+                    <li class="tab col s3"><a href="#yarn">Cotton Yarn</a></li>
+                    <li class="tab col s3"><a href="#fabric">Fabrics</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="products-container">
+            <div class="row">
+                <!-- All products in a single container -->
+                <!-- Keep the existing product cards here, but remove the duplicates -->
+                <div class="col s12 m4 product-card-wrapper" data-category="cotton">
+                    <div class="product-card">
+                        <div class="product-card-inner">
+                            <div class="product-front">
+                                <img src="https://picsum.photos/400/300?random=1" alt="Premium Cotton">
+                                <h5>Premium Raw Cotton</h5>
+                            </div>
+                            <div class="product-back">
+                                <h5>Premium Grade</h5>
+                                <p>Highest quality raw cotton for premium textile manufacturing</p>
+                                <a class="btn waves-effect waves-light">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s12 m4 product-card-wrapper" data-category="cotton">
+                    <div class="product-card">
+                        <div class="product-card-inner">
+                            <div class="product-front">
+                                <img src="https://picsum.photos/400/300?random=2" alt="Organic Cotton">
+                                <h5>Organic Cotton</h5>
+                            </div>
+                            <div class="product-back">
+                                <h5>Organic Collection</h5>
+                                <p>100% certified organic cotton, sustainably sourced</p>
+                                <a class="btn waves-effect waves-light">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s12 m4 product-card-wrapper" data-category="yarn">
+                    <div class="product-card">
+                        <div class="product-card-inner">
+                            <div class="product-front">
+                                <img src="https://picsum.photos/400/300?random=3" alt="Fine Yarn">
+                                <h5>Fine Count Yarn</h5>
+                            </div>
+                            <div class="product-back">
+                                <h5>Premium Yarn</h5>
+                                <p>Fine count yarn perfect for luxury garments</p>
+                                <a class="btn waves-effect waves-light">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s12 m4 product-card-wrapper" data-category="yarn">
+                    <div class="product-card">
+                        <div class="product-card-inner">
+                            <div class="product-front">
+                                <img src="https://picsum.photos/400/300?random=4" alt="Dyed Yarn">
+                                <h5>Dyed Yarn Collection</h5>
+                            </div>
+                            <div class="product-back">
+                                <h5>Color Series</h5>
+                                <p>Pre-dyed yarn in various colors and counts</p>
+                                <a class="btn waves-effect waves-light">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s12 m4 product-card-wrapper" data-category="fabric">
+                    <div class="product-card">
+                        <div class="product-card-inner">
+                            <div class="product-front">
+                                <img src="https://picsum.photos/400/300?random=5" alt="Denim">
+                                <h5>Premium Denim</h5>
+                            </div>
+                            <div class="product-back">
+                                <h5>Denim Collection</h5>
+                                <p>High-quality denim in various weights and finishes</p>
+                                <a class="btn waves-effect waves-light">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s12 m4 product-card-wrapper" data-category="fabric">
+                    <div class="product-card">
+                        <div class="product-card-inner">
+                            <div class="product-front">
+                                <img src="https://picsum.photos/400/300?random=6" alt="Canvas">
+                                <h5>Cotton Canvas</h5>
+                            </div>
+                            <div class="product-back">
+                                <h5>Heavy Duty</h5>
+                                <p>Durable cotton canvas for industrial applications</p>
+                                <a class="btn waves-effect waves-light">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Updated Testimonials Section -->
+    <section class="testimonial-section">
+        <div class="container">
+            <h3 class="center-align">What Our Clients Say</h3>
+
+            <div class="overall-rating">
+                <div class="rating-number">4.8</div>
+                <div class="star-rating">
+                    <i class="material-icons">star</i>
+                    <i class="material-icons">star</i>
+                    <i class="material-icons">star</i>
+                    <i class="material-icons">star</i>
+                    <i class="material-icons">star_half</i>
+                </div>
+                <div>Based on 50+ reviews</div>
+            </div>
+
+            <div class="testimonial-carousel">
+                <div class="carousel-nav carousel-prev">
+                    <i class="material-icons">chevron_left</i>
+                </div>
+
+                <div class="testimonial-track">
+                    <div class="testimonial-card active">
+                        <div class="testimonial-header">
+                            <img src="https://picsum.photos/100/100?random=1" alt="Client" class="testimonial-image">
+                            <div class="testimonial-info">
+                                <h5 class="testimonial-name">Rajesh Patel</h5>
+                                <div class="testimonial-position">Local Textile Shop Owner</div>
+                                <div class="star-rating">
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star</i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="testimonial-quote">"Been buying cotton from Varnaa Mills for my shop for over 15 years. Their consistent quality and fair prices keep me coming back. They treat small buyers like family."</p>
+                        <div class="testimonial-meta">
+                            <span class="testimonial-date">March 10, 2024</span>
+                            <span class="testimonial-verified"><i class="material-icons">verified</i>Regular Customer</span>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <img src="https://picsum.photos/100/100?random=2" alt="Client" class="testimonial-image">
+                            <div class="testimonial-info">
+                                <h5 class="testimonial-name">Lakshmi Devi</h5>
+                                <div class="testimonial-position">Local Weaver</div>
+                                <div class="star-rating">
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star_half</i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="testimonial-quote">"Their cotton yarn is perfect for traditional handloom weaving. The staff always helps me select the right quality for my work. It's like having a partner in my small business."</p>
+                        <div class="testimonial-meta">
+                            <span class="testimonial-date">March 5, 4</span>
+                            <span class="testimonial-verified"><i class="material-icons">verified</i>Verified Purchase</span>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <img src="https://picsum.photos/100/100?random=3" alt="Client" class="testimonial-image">
+                            <div class="testimonial-info">
+                                <h5 class="testimonial-name">Suresh Kumar</h5>
+                                <div class="testimonial-position">Small Garment Manufacturer</div>
+                                <div class="star-rating">
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="testimonial-quote">"What I appreciate most is their flexible payment terms for small businesses like mine. The quality is good and consistent, which helps maintain our product standards."</p>
+                        <div class="testimonial-meta">
+                            <span class="testimonial-date">February 28, 2024</span>
+                            <span class="testimonial-verified"><i class="material-icons">verified</i>Regular Customer</span>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <img src="https://picsum.photos/100/100?random=4" alt="Client" class="testimonial-image">
+                            <div class="testimonial-info">
+                                <h5 class="testimonial-name">Meena Sharma</h5>
+                                <div class="testimonial-position">Boutique Owner</div>
+                                <div class="star-rating">
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star</i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="testimonial-quote">"Even though I order in small quantities for my boutique, they always ensure I get the best quality. Their personal attention makes all the difference."</p>
+                        <div class="testimonial-meta">
+                            <span class="testimonial-date">February 25, 2024</span>
+                            <span class="testimonial-verified"><i class="material-icons">verified</i>Verified Purchase</span>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <img src="https://picsum.photos/100/100?random=5" alt="Client" class="testimonial-image">
+                            <div class="testimonial-info">
+                                <h5 class="testimonial-name">Abdul Rahman</h5>
+                                <div class="testimonial-position">Local Fabric Trader</div>
+                                <div class="star-rating">
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="testimonial-quote">"Have been dealing with Varnaa Mills for a decade now. They understand the challenges of small traders and always try to accommodate our needs."</p>
+                        <div class="testimonial-meta">
+                            <span class="testimonial-date">February 20, 2024</span>
+                            <span class="testimonial-verified"><i class="material-icons">verified</i>Regular Customer</span>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <img src="https://picsum.photos/100/100?random=6" alt="Client" class="testimonial-image">
+                            <div class="testimonial-info">
+                                <h5 class="testimonial-name">Anita Reddy</h5>
+                                <div class="testimonial-position">Handloom Weaver</div>
+                                <div class="star-rating">
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star_half</i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="testimonial-quote">"Varnaa Mills' yarn is perfect for my handloom creations. The quality is unmatched and the service is always friendly."</p>
+                        <div class="testimonial-meta">
+                            <span class="testimonial-date">February 15, 2024</span>
+                            <span class="testimonial-verified"><i class="material-icons">verified</i>Verified Purchase</span>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <img src="https://picsum.photos/100/100?random=7" alt="Client" class="testimonial-image">
+                            <div class="testimonial-info">
+                                <h5 class="testimonial-name">Vijay Kumar</h5>
+                                <div class="testimonial-position">Small Shopkeeper</div>
+                                <div class="star-rating">
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star</i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="testimonial-quote">"I have been sourcing fabrics from Varnaa Mills for years. Their commitment to quality and customer service is exceptional."</p>
+                        <div class="testimonial-meta">
+                            <span class="testimonial-date">February 10, 2024</span>
+                            <span class="testimonial-verified"><i class="material-icons">verified</i>Regular Customer</span>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <img src="https://picsum.photos/100/100?random=8" alt="Client" class="testimonial-image">
+                            <div class="testimonial-info">
+                                <h5 class="testimonial-name">Priya Singh</h5>
+                                <div class="testimonial-position">Local Artisan</div>
+                                <div class="star-rating">
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star_half</i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="testimonial-quote">"The cotton from Varnaa Mills is perfect for my handmade products. Their attention to detail and quality is evident in every batch."</p>
+                        <div class="testimonial-meta">
+                            <span class="testimonial-date">February 5, 2024</span>
+                            <span class="testimonial-verified"><i class="material-icons">verified</i>Verified Purchase</span>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <img src="https://picsum.photos/100/100?random=9" alt="Client" class="testimonial-image">
+                            <div class="testimonial-info">
+                                <h5 class="testimonial-name">Ravi Verma</h5>
+                                <div class="testimonial-position">Textile Designer</div>
+                                <div class="star-rating">
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star</i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="testimonial-quote">"Varnaa Mills' fabrics are a designer's dream. The quality and variety they offer are unparalleled."</p>
+                        <div class="testimonial-meta">
+                            <span class="testimonial-date">January 30, 2024</span>
+                            <span class="testimonial-verified"><i class="material-icons">verified</i>Regular Customer</span>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <img src="https://picsum.photos/100/100?random=10" alt="Client" class="testimonial-image">
+                            <div class="testimonial-info">
+                                <h5 class="testimonial-name">Sunita Rao</h5>
+                                <div class="testimonial-position">Boutique Owner</div>
+                                <div class="star-rating">
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star</i><i class="material-icons">star</i>
+                                    <i class="material-icons">star_half</i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="testimonial-quote">"The personalized service and high-quality products from Varnaa Mills make them my go-to supplier for my boutique."</p>
+                        <div class="testimonial-meta">
+                            <span class="testimonial-date">January 25, 2024</span>
+                            <span class="testimonial-verified"><i class="material-icons">verified</i>Verified Purchase</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="carousel-nav carousel-next">
+                    <i class="material-icons">chevron_right</i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section scrollspy">
+        <div class="container">
+            <div class="row">
+                <div class="col s12 m6">
+                    <div class="card">
+                        <div class="card-content">
+                            <span class="card-title">Get in Touch</span>
+                            <form id="contact-form">
+                                <div class="input-field">
+                                    <input id="name" type="text" required>
+                                    <label for="name">Name</label>
+                                </div>
+                                <div class="input-field">
+                                    <input id="email" type="email" required>
+                                    <label for="email">Email</label>
+                                </div>
+                                <div class="input-field">
+                                    <textarea id="message" class="materialize-textarea" required></textarea>
+                                    <label for="message">Message</label>
+                                </div>
+                                <button class="btn waves-effect waves-light" type="submit">
+                                    Send Message
+                                    <i class="material-icons right">send</i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 m6">
+                    <div class="map-container">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3912.1859352325355!2d77.70431101160787!3d11.321116388816252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba96fffc210beb5%3A0x7feea2f97132e83f!2sVarnaa%20Cotton%20Mills!5e0!3m2!1sen!2sin!4v1732964872187!5m2!1sen!2sin" 
+                            width="100%" 
+                            height="100%" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col s12 m4">
+                    <h5>Contact</h5>
+                    <p>123 Cotton Street<br>
+                        Textile City, TC 12345<br>
+                        Phone: (123) 456-7890<br>
+                        Email: info@varnaacotton.com</p>
+                </div>
+                <div class="col s12 m4">
+                    <h5>Quick Links</h5>
+                    <ul>
+                        <li><a href="#!">Products</a></li>
+                        <li><a href="#!">Services</a></li>
+                        <li><a href="#!">Blog</a></li>
+                        <li><a href="#!">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="col s12 m4">
+                    <h5>Follow Us</h5>
+                    <div class="social-links">
+                        <a href="#!"><i class="fab fa-facebook"></i></a>
+                        <a href="#!"><i class="fab fa-twitter"></i></a>
+                        <a href="#!"><i class="fab fa-linkedin"></i></a>
+                        <a href="#!"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Action Button -->
+    <div class="floating-btn">
+        <a class="btn-floating btn-large pulse" style="background-color: var(--primary-color)">
+            <i class="material-icons">message</i>
+        </a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <!-- Main script -->
+    <script>
+        $(document).ready(function () {
+            // Initialize Materialize components
+            $('.sidenav').sidenav();
+            $('.parallax').parallax();
+            $('.scrollspy').scrollSpy();
+
+            // Navbar scroll effect
+            $(window).scroll(function () {
+                if ($(window).scrollTop() > 50) {
+                    $('nav').addClass('scrolled');
+                } else {
+                    $('nav').removeClass('scrolled');
+                }
+            });
+
+            // Smooth scroll
+            $('a[href*="#"]').on('click', function (e) {
+                e.preventDefault();
+                $('html, body').animate(
+                    {
+                        scrollTop: $($(this).attr('href')).offset().top
+                    },
+                    500,
+                    'linear'
+                );
+            });
+
+            // Animation on scroll
+            $(window).scroll(function () {
+                $('.animate-on-scroll').each(function () {
+                    if ($(this).offset().top < $(window).scrollTop() + $(window).height() * 0.75) {
+                        $(this).addClass('animate__animated animate__fadeInUp');
+                    }
+                });
+            });
+
+            // Initialize new components
+            $('.carousel').carousel({
+                fullWidth: true,
+                indicators: true
+            });
+
+            // Counter animation
+            $('.stats-counter').each(function () {
+                $(this).prop('Counter', 0).animate({
+                    Counter: $(this).data('count')
+                }, {
+                    duration: 2000,
+                    easing: 'swing',
+                    step: function (now) {
+                        $(this).text(Math.ceil(now));
+                    }
+                });
+            });
+
+            // Product filter
+            $('.filter-button').click(function () {
+                let value = $(this).attr('data-filter');
+                if (value == 'all') {
+                    $('.product-item').show('1000');
+                } else {
+                    $('.product-item').not('.' + value).hide('3000');
+                    $('..product-item').filter('.' + value).show('3000');
+                }
+            });
+
+            // Contact form handling
+            $('#contact-form').submit(function (e) {
+                e.preventDefault();
+                M.toast({ html: 'Message sent successfully!' });
+            });
+
+            // Updated testimonial carousel logic
+            class TestimonialCarousel {
+                constructor() {
+                    this.currentIndex = 0;
+                    this.track = $('.testimonial-track');
+                    this.cards = $('.testimonial-card');
+                    this.totalCards = this.cards.length;
+                    this.autoPlayInterval = null;
+                    
+                    this.init();
+                }
+
+                init() {
+                    this.updateCarousel();
+                    this.bindEvents();
+                    this.startAutoPlay();
+                }
+
+                updateCarousel() {
+                    this.cards.removeClass('prev active next').css('visibility', 'hidden');
+
+                    // Calculate indices
+                    const prevIndex = (this.currentIndex - 1 + this.totalCards) % this.totalCards;
+                    const nextIndex = (this.currentIndex + 1) % this.totalCards;
+
+                    // Apply classes
+                    this.cards.eq(prevIndex).addClass('prev').css('visibility', 'visible');
+                    this.cards.eq(this.currentIndex).addClass('active').css('visibility', 'visible');
+                    this.cards.eq(nextIndex).addClass('next').css('visibility', 'visible');
+                }
+
+                move(direction) {
+                    if (direction === 'next') {
+                        this.currentIndex = (this.currentIndex + 1) % this.totalCards;
+                    } else {
+                        this.currentIndex = (this.currentIndex - 1 + this.totalCards) % this.totalCards;
+                    }
+                    this.updateCarousel();
+                }
+
+                bindEvents() {
+                    // Navigation buttons
+                    $('.carousel-next').off('click').on('click', () => this.move('next'));
+                    $('.carousel-prev').off('click').on('click', () => this.move('prev'));
+
+                    // Click on prev/next cards
+                    this.cards.off('click').on('click', (e) => {
+                        const clickedCard = $(e.currentTarget);
+                        if (clickedCard.hasClass('prev')) {
+                            this.move('prev');
+                        } else if (clickedCard.hasClass('next')) {
+                            this.move('next');
+                        }
+                    });
+                    
+                    // Pause on hover
+                    $('.testimonial-carousel').hover(
+                        () => this.stopAutoPlay(),
+                        () => this.startAutoPlay()
+                    );
+                }
+
+                startAutoPlay() {
+                    this.stopAutoPlay();
+                    this.autoPlayInterval = setInterval(() => this.move('next'), 5000);
+                }
+
+                stopAutoPlay() {
+                    if (this.autoPlayInterval) {
+                        clearInterval(this.autoPlayInterval);
+                    }
+                }
+            }
+
+            // Initialize the carousel
+            new TestimonialCarousel();
+
+            // Updated Gallery Scroll Logic
+            const galleryContainer = document.querySelector('.gallery-container');
+            const galleryWrapper = document.querySelector('.horizontal-gallery-wrapper');
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            const itemCount = galleryItems.length;
+
+            // Initialize gallery wrapper as visible
+            galleryWrapper.classList.add('visible');
+
+            window.addEventListener('scroll', () => {
+                const containerRect = galleryContainer.getBoundingClientRect();
+                const containerTop = containerRect.top;
+                const containerHeight = containerRect.height;
+                const viewportHeight = window.innerHeight;
+
+                if (containerTop <= 0 && containerTop > -containerHeight + viewportHeight) {
+                    // Calculate which image to show
+                    const scrollProgress = Math.abs(containerTop) / (containerHeight - viewportHeight);
+                    const currentIndex = Math.min(
+                        Math.floor(scrollProgress * itemCount),
+                        itemCount - 1
+                    );
+
+                    // Update active image
+                    galleryItems.forEach((item, index) => {
+                        if (index === currentIndex) {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    });
+                }
+            });
+
+            // Enhanced Product filter
+            $('.filter-button').click(function() {
+                $('.filter-button').removeClass('active');
+                $(this).addClass('active');
+                
+                let category = $(this).data('filter');
+                
+                if(category === 'all') {
+                    $('.product-card-wrapper').fadeIn(300);
+                } else {
+                    $('.product-card-wrapper').hide();
+                    $('.product-card-wrapper[data-category="' + category + '"]').fadeIn(300);
+                }
+            });
+
+            // Initialize tabs
+            $('.tabs').tabs({
+                swipeable: false,
+                responsiveThreshold: Infinity
+            });
+            
+            // Remove the old filter button click handler and add this instead:
+            $('.tabs').on('click', '.tab a', function(e) {
+                e.preventDefault();
+                const category = $(this).attr('href').substring(1);
+                
+                if(category === 'all') {
+                    $('.product-card-wrapper').fadeIn(300);
+                } else {
+                    $('.product-card-wrapper').hide();
+                    $(`.product-card-wrapper[data-category="${category}"]`).fadeIn(300);
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
