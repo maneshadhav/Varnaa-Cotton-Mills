@@ -1293,6 +1293,23 @@
             // Initialize the carousel
             new TestimonialCarousel();
 
+            var checkScrollSpeed = (function(settings){
+                settings = settings || {};
+                var lastPos, newPos, timer, delta, delay = settings.delay || 50; // in "ms" (higher means lower fidelity )
+                function clear() { lastPos = null; delta = 0; }
+                clear();
+                return function(){
+                    newPos = window.scrollY;
+                    if ( lastPos != null ){ // && newPos < maxScroll 
+                        delta = newPos -  lastPos;
+                    }
+                    lastPos = newPos;
+                    clearTimeout(timer);
+                    timer = setTimeout(clear, delay);
+                    return delta;
+                };
+            })();
+
             // Updated Gallery Scroll Logic with Scroll Indicator
             const galleryContainer = document.querySelector('.gallery-container');
             const galleryWrapper = document.querySelector('.horizontal-gallery-wrapper');
@@ -1303,39 +1320,54 @@
             // Initialize gallery wrapper as visible
             galleryWrapper.classList.add('visible');
 
+            let lastScrollTop = 0;
+            let isScrolling = false;
+
             window.addEventListener('scroll', () => {
                 const containerRect = galleryContainer.getBoundingClientRect();
                 const containerTop = containerRect.top;
                 const containerHeight = containerRect.height;
                 const viewportHeight = window.innerHeight;
-
+                
                 if (containerTop <= 0 && containerTop > -containerHeight + viewportHeight) {
-                    // Calculate scroll progress
                     const scrollProgress = Math.abs(containerTop) / (containerHeight - viewportHeight);
-                    const currentIndex = Math.min(
-                        Math.floor(scrollProgress * itemCount),
-                        itemCount - 1
-                    );
-
+                    const sectionSize = 1 / itemCount;
+                    const currentSection = Math.floor(scrollProgress / sectionSize);
+                    const currentScrollTop = window.pageYOffset;
+                    
+                    // Determine scroll direction
+                    const scrollingDown = currentScrollTop > lastScrollTop;
+                    
+                    if (!isScrolling && Math.abs(checkScrollSpeed()) < 0) {
+                        if (scrollProgress % sectionSize > 0.01) {
+                            isScrolling = true;
+                            
+                            // Calculate target based on scroll direction
+                            const targetSection = scrollingDown ? currentSection + 1 : currentSection;
+                            const targetScroll = galleryContainer.offsetTop + (containerHeight - viewportHeight) * (targetSection * sectionSize) - 1;
+                            
+                            window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+                            
+                            // Reset scrolling flag after animation
+                            setTimeout(() => { isScrolling = false }, 500);
+                        }
+                    }
+                    
                     // Update active image
                     galleryItems.forEach((item, index) => {
-                        if (index === currentIndex) {
-                            item.classList.add('active');
-                        } else {
-                            item.classList.remove('active');
-                        }
+                        item.classList.toggle('active', index === currentSection);
                     });
-
+                    
                     // Update scroll indicator
                     indicatorProgress.style.height = `${scrollProgress * 100}%`;
+                    
+                    lastScrollTop = currentScrollTop;
                 }
-
-                // Show or hide scroll indicator based on scroll position
-                if (containerTop <= 0 && containerTop > -containerHeight + viewportHeight) {
-                    $('.scroll-indicator').fadeIn(200);
-                } else {
-                    $('.scroll-indicator').fadeOut(200);
-                }
+                
+                // Show/hide scroll indicator
+                $('.scroll-indicator').toggle(
+                    containerTop <= 0 && containerTop > -containerHeight + viewportHeight
+                );
             });
 
             // Adjust scroll sensitivity for mouse users
