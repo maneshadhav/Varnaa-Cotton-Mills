@@ -626,7 +626,7 @@
         <div class="container">
             <div class="row">
                 <div class="col s12 m3 center-align">
-                    <div class="stats-counter" data-count="35">0</div>
+                    <div class="stats-counter" data-count="30">0</div>
                     <p>Years of Excellence</p>
                 </div>
                 <div class="col s12 m3 center-align">
@@ -634,7 +634,7 @@
                     <p>colour pallete</p>
                 </div>
                 <div class="col s12 m3 center-align">
-                    <div class="stats-counter" data-count="200">0</div>
+                    <div class="stats-counter" data-count="100">0</div>
                     <p>products</p>
                 </div>
                 <div class="col s12 m3 center-align">
@@ -1195,6 +1195,10 @@
                     easing: 'swing',
                     step: function (now) {
                         $(this).text(Math.ceil(now));
+                    },
+                    complete: function() {
+                        // Add the '+' character after the animation completes
+                        $(this).text($(this).text() + "+");
                     }
                 });
             });
